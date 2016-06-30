@@ -1,13 +1,13 @@
 function [ mean_sq,rewardCount,localIncome_VerComp,modelChoiceVerComp,max_like,resultsComp] = model_body( tau,results,choiceStreamAll,Totaltrials,Totalblocks,runsi,rewardCount,mean_sq,max_like)
-%Function does almost all model related calculations. Quite complicated,
+%Function does almost all model related calculations. Quite complicated,%Removed output resultsComp
 %perhaps unnecessarily so. 
 
 %%
 %Simulation of reward stream:
-sim_data=1;
+sim_data=0;
 
 if sim_data
-    parameters.trlTotal     = 1000;  % total number of trials in session
+    parameters.trlTotal     = 500;  % total number of trials in session
     parameters.trlPause     = 100;   % insert a break every x trials.
     parameters.blocklength  = results.parameters.blocklength; % range of number of trial before next block switch
     
@@ -37,10 +37,12 @@ if sim_data
     trlCount = 0;
     Totalblocks=nblocks;
     Totaltrials=parameters.trlTotal ;
+else
+    resultsComp=[]; %Just to avoid output error
 end
 
 %%
-%Rest
+%Rest.
 
 %Pre-allocating matrices for optimality.
 modelChoiceVerComp=zeros(1,Totaltrials,length(tau));
@@ -75,7 +77,7 @@ for betaValue=1:length(betas)
             else
                 numtrials=results.blocks{blocksi}.ntrls; %How many trials in one block, should be way more. Changed 2/July.
                 %Reward available identical to participant.
-                newrewardHor=results.blocks{1,blocksi}.newrewardHor;
+                newrewardHor=results.blocks{1,blocksi}.newrewardHor; 
                 newrewardVer=results.blocks{1,blocksi}.newrewardVer;
             end
 
@@ -85,6 +87,9 @@ for betaValue=1:length(betas)
                 rewardHor = rewardHor+newrewardHor(trialsi);
                 rewardVer = rewardVer+newrewardVer(trialsi);
                 
+                %For the first trial set the prior as 0.5 choice prob.
+                %Another way could be to not count the first few trials
+                %somehow. 
                 if trialAll == 1
                     outputHor = 1;
                     outputVer = 1;
@@ -126,7 +131,7 @@ for betaValue=1:length(betas)
                 Verlast = localIncome_VerComp(1,1:trialAll,tauer);
                 
                 diffValue=(localIncome_VerComp(1,trialAll,tauer))-(localIncome_HorComp(1,trialAll,tauer));
-                probChoice=softmax(diffValue,betas);
+                probChoice=softmaxOwn(diffValue,betas);
                 
                 %modelChoiceVerComp(1,trialAll,tauer)=binornd(1,localIncome_VerComp(1,trialAll,tauer));
                 modelChoiceVerComp(1,trialAll,tauer)=binornd(1,probChoice);
@@ -166,11 +171,11 @@ for betaValue=1:length(betas)
                 end
                 
                 %This if-statement is to avoid issues arising due to
-                %mismatch in length when running simulated data
-                if trialAll<=length(choiceStreamAll)
+                %mismatch in length when running simulated data.
+               % if trialAll<=length(choiceStreamAll)
                     l_i=localIncome_VerComp(1,trialAll,tauer);
                     max_like(trialAll,tauer,betaValue,runsi)=(l_i.^choiceStreamAll(1,trialAll)).*(1-l_i).^(1-choiceStreamAll(1,trialAll));
-                end
+               % end
                 trialAll=trialAll+1;
             end
         end
@@ -178,11 +183,11 @@ for betaValue=1:length(betas)
         %Calculating the mean difference between the choices and
         %local income. Also this if-statement is to avoid issues arising due to
         %mismatch in length when running simulated data
-        if trialAll<=length(choiceStreamAll)
+        %if trialAll<=length(choiceStreamAll)
             mean_sq(1,tauer,runsi)=mean((localIncome_VerComp(1,:,tauer)-choiceStreamAll).^2);
             randinm=rand(1,results.parameters.trlTotal);
-            mean_sqr(1,tauer,runsi)=mean((randinm-choiceStreamAll).^2);
-        end
+            %mean_sqr(1,tauer,runsi)=mean((randinm-choiceStreamAll).^2);
+        %end
         
         
     end
