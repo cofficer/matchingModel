@@ -9,7 +9,6 @@ warning ('off','MATLAB:warn_r14_stucture_assignment')
 
 cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
-load('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior/HRi_sess1_2015_8_15_13_44.mat')
 
 %Choose which subject and session to analyse
 npart         = 26; %How many participants. 
@@ -40,23 +39,22 @@ whichPart       = 5;
 [ PLA,ATM ] = loadSessions();
 
 
-cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
-names=dir('*sess1*mat');
+names=dir('*.mat');
 
-names=names(cell2mat({names.bytes})>5000);
+%names=names(cell2mat({names.bytes})>5000);
 
-names=names(1:npart); %npart decides how many sessions to loop
+%names=names(1:npart); %npart decides how many sessions to loop
 
 
 %Initial states ##MAIN PARAMETERS##
-taulen  = 40;
+taulen  = 20;
 betas   = 1;
 %betas=linspace(1,10,10);
 tau     = logspace(0,2.5,taulen);
 %Linspace for now
 tau=linspace(4,14,taulen);
-runs    = 30;
+runs    = 10;
 %What is the purpose of missm?
 missm   = 0;
 %number of participants
@@ -83,12 +81,14 @@ for allSessions=1:2
         
         currParticipant = PLA(allPart);
         
-        load(currParticipant{1})
+        %load(currParticipant{1})
+        load(names(allPart*2-1).name)
     else
         
         currParticipant = ATM(allPart);
         
-        load(currParticipant{1})
+        %load(currParticipant{1})
+        load(names(allPart*2).name)
         
     end
     
@@ -181,10 +181,10 @@ for allSessions=1:2
     
     for eachrun=1:runs
         [~,lowTau]=min(mean_sq(1,:,eachrun));
-        lowTauAll(npart,allSessions,eachrun)=tau(lowTau);
+        lowTauAll(allPart,allSessions,eachrun)=tau(lowTau);
         
         [~,maxDis]=max(prod(max_like(:,:,1,eachrun)));
-        maxTauAll(npart,allSessions,eachrun)=tau(maxDis);
+        maxTauAll(allPart,allSessions,eachrun)=tau(maxDis);
         
         if lowTauAll(1,allSessions,eachrun)~=maxTauAll(1,allSessions,eachrun)
             missm=missm+1;
@@ -240,8 +240,20 @@ at=squeeze(maxTauAll(:,2,:));
 pl=squeeze(maxTauAll(:,1,:));
 
 %Mean each condition
-atAV=mean(at,2);
-plAV=mean(pl,2);
+atAV=nanmean(at,2);
+plAV=nanmean(pl,2);
 
-bar([1 2],[atAV plAV]')
+bar([1 2],[nanmean(atAV) nanmean(plAV)]')
+
+errorbar([1 2],[std(atAV(1:end-1)) std(plAV)])
+
+barwitherr([std(atAV(1:end-1)) std(plAV)],[nanmean(atAV) nanmean(plAV)])
+
+
+maxTauAll(maxTauAll==0)=NaN;
+
+
+
+
+
 
