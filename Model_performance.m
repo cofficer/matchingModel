@@ -253,7 +253,8 @@ barwitherr([std(atAV(1:end-1)) std(plAV)],[nanmean(atAV) nanmean(plAV)])
 maxTauAll(maxTauAll==0)=NaN;
 
 
-
-
+figure(1),clf
+plot([1,2],[atAV plAV])
+xlim([0.7 2.3])
 
 
