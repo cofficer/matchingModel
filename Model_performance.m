@@ -11,7 +11,7 @@ cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
 
 %Choose which subject and session to analyse
-npart         = 26; %How many participants. 
+npart         = 1; %How many participants. 
 session         = 1; %Currently atomoxetine. 
 
 %Define the block lengths that will be used.    
@@ -36,11 +36,14 @@ whichPart       = 5;
 
 
 %Get the sorted atomoxetine and placebo sessions:
-[ PLA,ATM ] = loadSessions();
+%[ PLA,ATM ] = loadSessions();
 
 
 
-names=dir('*.mat');
+names=dir('*_*.mat');
+
+%Find specific participant
+names=dir('AMe*');
 
 %names=names(cell2mat({names.bytes})>5000);
 
@@ -54,7 +57,7 @@ betas   = 1;
 tau     = logspace(0,2.5,taulen);
 %Linspace for now
 tau=linspace(4,14,taulen);
-runs    = 10;
+runs    = 1;
 %What is the purpose of missm?
 missm   = 0;
 %number of participants
@@ -79,13 +82,13 @@ for allSessions=1:2
     
     if allSessions == 1 %load placebo
         
-        currParticipant = PLA(allPart);
+        %currParticipant = PLA(allPart);
         
         %load(currParticipant{1})
         load(names(allPart*2-1).name)
     else
         
-        currParticipant = ATM(allPart);
+        %currParticipant = ATM(allPart);
         
         %load(currParticipant{1})
         load(names(allPart*2).name)
@@ -213,48 +216,5 @@ end
 
 
 disp('model done')
-
-
-%%
-
-
-mean_sqAll=mean(mean_sq,3);
-std_mean_sqAll = std(squeeze(mean_sq)')./sqrt(runs);
-
-figure(3),clf
-hold on
-for ina=1:runs
-semilogx(tau,mean_sq(1,:,ina))
-title('Model fit of tau to behavioral data')
-xlabel('Values of the single model parameter Tau')
-ylabel('Mean squared error')
-end
-errorbar(tau,mean_sqAll,std_mean_sqAll, 'r', 'linewidth', 3);
-set(gca, 'xscale', 'log')
-
-%%
-%Plot the average tau comparing atomoxetine and placebo. 
-
-%Each condition
-at=squeeze(maxTauAll(:,2,:));
-pl=squeeze(maxTauAll(:,1,:));
-
-%Mean each condition
-atAV=nanmean(at,2);
-plAV=nanmean(pl,2);
-
-bar([1 2],[nanmean(atAV) nanmean(plAV)]')
-
-errorbar([1 2],[std(atAV(1:end-1)) std(plAV)])
-
-barwitherr([std(atAV(1:end-1)) std(plAV)],[nanmean(atAV) nanmean(plAV)])
-
-
-maxTauAll(maxTauAll==0)=NaN;
-
-
-figure(1),clf
-plot([1,2],[atAV plAV])
-xlim([0.7 2.3])
 
 
