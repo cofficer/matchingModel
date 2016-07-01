@@ -21,6 +21,9 @@ set(gca, 'xscale', 'log')
 %%
 %Plot the average tau comparing atomoxetine and placebo. 
 
+figure(1),clf
+hold on;
+
 %Each condition
 at=squeeze(maxTauAll(:,2,:));
 pl=squeeze(maxTauAll(:,1,:));
@@ -29,17 +32,18 @@ pl=squeeze(maxTauAll(:,1,:));
 atAV=nanmean(at,2);
 plAV=nanmean(pl,2);
 
-bar([1 2],[nanmean(atAV) nanmean(plAV)]')
+bar([1 2],[nanmean(plAV) nanmean(atAV)]')
 
-errorbar([1 2],[std(atAV(1:end-1)) std(plAV)])
+errorbar([1 2],[mean(plAV) mean(atAV)],[std(plAV) std(atAV)])
 
-barwitherr([std(atAV(1:end-1)) std(plAV)],[nanmean(atAV) nanmean(plAV)])
-
-
-maxTauAll(maxTauAll==0)=NaN;
+%barwitherr([std(atAV(1:end-1)) std(plAV)],[nanmean(atAV) nanmean(plAV)])
 
 
-figure(1),clf
 plot([1,2],[atAV plAV])
 xlim([0.7 2.3])
+
+
+%%
+%Plot individually
+
 

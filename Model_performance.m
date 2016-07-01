@@ -11,7 +11,7 @@ cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
 
 %Choose which subject and session to analyse
-npart         = 1; %How many participants. 
+npart         = 31; %How many participants. 
 session         = 1; %Currently atomoxetine. 
 
 %Define the block lengths that will be used.    
@@ -36,14 +36,14 @@ whichPart       = 5;
 
 
 %Get the sorted atomoxetine and placebo sessions:
-%[ PLA,ATM ] = loadSessions();
+[ PLA,ATM ] = loadSessions();
 
 
 
 names=dir('*_*.mat');
 
 %Find specific participant
-names=dir('AMe*');
+%names=dir('AMe*');
 
 %names=names(cell2mat({names.bytes})>5000);
 
@@ -51,7 +51,7 @@ names=dir('AMe*');
 
 
 %Initial states ##MAIN PARAMETERS##
-taulen  = 20;
+taulen  = 40;
 betas   = 1;
 %betas=linspace(1,10,10);
 tau     = logspace(0,2.5,taulen);
@@ -82,13 +82,13 @@ for allSessions=1:2
     
     if allSessions == 1 %load placebo
         
-        %currParticipant = PLA(allPart);
+        currParticipant = PLA(allPart);
         
         %load(currParticipant{1})
         load(names(allPart*2-1).name)
     else
         
-        %currParticipant = ATM(allPart);
+        currParticipant = ATM(allPart);
         
         %load(currParticipant{1})
         load(names(allPart*2).name)
