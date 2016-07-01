@@ -1,8 +1,13 @@
-function [ mean_sq,rewardCount,localIncome_VerComp,modelChoiceVerComp,max_like,resultsComp] = model_body( tau,results,choiceStreamAll,Totaltrials,Totalblocks,runsi,rewardCount,mean_sq,max_like)
+function [ rewardCount,max_like] = model_body( tau,results,choiceStreamAll,runsi,rewardCount,max_like)
 %Function does almost all model related calculations. Quite complicated,%Removed output resultsComp
 %perhaps unnecessarily so. 
+%Takenout: mean_sq resultsComp
 
 %%
+
+Totaltrials=length(choiceStreamAll);
+Totalblocks=length(results.blocks);
+
 %Simulation of reward stream:
 sim_data=0;
 
@@ -180,14 +185,6 @@ for betaValue=1:length(betas)
             end
         end
         
-        %Calculating the mean difference between the choices and
-        %local income. Also this if-statement is to avoid issues arising due to
-        %mismatch in length when running simulated data
-        %if trialAll<=length(choiceStreamAll)
-            mean_sq(1,tauer,runsi)=mean((localIncome_VerComp(1,:,tauer)-choiceStreamAll).^2);
-            randinm=rand(1,results.parameters.trlTotal);
-            %mean_sqr(1,tauer,runsi)=mean((randinm-choiceStreamAll).^2);
-        %end
         
         
     end

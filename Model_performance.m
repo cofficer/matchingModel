@@ -3,6 +3,7 @@
 %Main script to run for the leaky integration model. 
 %Model performance should be based on X trials with block conditions identical to those
 %made by the participant.
+%Needs to become a function to be ran per participant
 
 clear all
 warning ('off','MATLAB:warn_r14_stucture_assignment') 
@@ -10,9 +11,8 @@ warning ('off','MATLAB:warn_r14_stucture_assignment')
 cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
 
-%Choose which subject and session to analyse
+%Choose numer of participants to analyse, current max 31. 
 npart         = 31; %How many participants. 
-session         = 1; %Currently atomoxetine. 
 
 %Define the block lengths that will be used.    
 blocklength     = 30;
@@ -39,19 +39,12 @@ whichPart       = 5;
 [ PLA,ATM ] = loadSessions();
 
 
-
+%Load in all .mat files to analyze order effect
 names=dir('*_*.mat');
-
-%Find specific participant
-%names=dir('AMe*');
-
-%names=names(cell2mat({names.bytes})>5000);
-
-%names=names(1:npart); %npart decides how many sessions to loop
 
 
 %Initial states ##MAIN PARAMETERS##
-taulen  = 40;
+taulen  = 101;
 betas   = 1;
 %betas=linspace(1,10,10);
 tau     = logspace(0,2.5,taulen);
@@ -60,8 +53,7 @@ tau=linspace(4,14,taulen);
 runs    = 1;
 %What is the purpose of missm?
 missm   = 0;
-%number of participants
-numParts= 1;
+
 
 %Placeholders for storing foraging efficiency
 numDelivered=1;
@@ -84,20 +76,17 @@ for allSessions=1:2
         
         currParticipant = PLA(allPart);
         
-        %load(currParticipant{1})
-        load(names(allPart*2-1).name)
+        load(currParticipant{1})
+        %load(names(allPart*2-1).name)
     else
         
         currParticipant = ATM(allPart);
         
-        %load(currParticipant{1})
-        load(names(allPart*2).name)
+        load(currParticipant{1})
+        %load(names(allPart*2).name)
         
     end
     
-    %Seems unneccessary. 
-    %varSess=sprintf('sess%d',allSessions);
-    %results=resultsAll.(varSess);
     
     %For the output choiceStreamAll, 0 is horizontal and 1 is vertical
     [choiceStreamAll] = global_matching(results);
@@ -119,8 +108,7 @@ for allSessions=1:2
         else
             fprintf('.')
         end
-        [ mean_sq,rewardCount,localIncome_VerComp,modelChoiceVerComp,max_like,resultsComp] = model_body( tau,...
-            results,choiceStreamAll,Totaltrials,Totalblocks,runsi,rewardCount,mean_sq,max_like);
+        [rewardCount,max_like] = model_body( tau,results,choiceStreamAll,runsi,rewardCount,max_like);
         
     end
     
@@ -135,16 +123,6 @@ for allSessions=1:2
         sem(itau)=std(mean_sq(1,itau,:))/sqrt(length(mean_sq(1,itau,:))); %SEM
     end
     
-    
-    %COMMENTS: Try with ignoring some trials for fitting instead of assumptions. ROC analysis.
-    %Inserted ROC analysis
-    
-    if rocanalysis==1
-        for tauer=1:length(tau)
-            [ AUCroc ] = rocAnalysis( localIncome_VerComp, choiceStreamAll , modelChoiceVerComp,tauer);
-            AUCAll(1,tauer,allSessions)=AUCroc;
-        end
-    end
     
     %Finding the foraging efficiency of behavioral data. Why the need
     %for the if-else statement. Commented out for now.
