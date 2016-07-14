@@ -46,4 +46,65 @@ xlim([0.7 2.3])
 %%
 %Plot individually
 
+%Struct with all the trial likelihoods calculated. 
+
+%Placebo
+plaMLE = allMLE.PLA;
+
+
+tauAll=0;
+
+tableTB     = zeros(size(plaMLE,3),size(plaMLE,2));
+
+
+
+for eachBeta = 1:size(plaMLE,3)
+    for eachTau = 1:size(plaMLE,2)
+        for eachrun = 1:2%size(plaMLE,4)
+            
+            
+            
+            
+            %Per beta and run, the product over all the different tau and
+            %choosing the maximum.
+            %[~,maxDis]=max(prod(plaMLE(:,eachTau,eachBeta,eachrun)));
+            MLE = prod(plaMLE(:,eachTau,eachBeta,eachrun));
+
+            tableTB(eachBeta,eachTau) = tableTB(eachBeta,eachTau)+MLE;
+            
+            %tauAll(eachrun,eachBeta)=tau(maxDis);
+            
+            %betaAll
+            
+        end
+    end
+    %tableTB(eachTau,eachBeta)=tableTB(eachTau,eachBeta)./10
+end
+
+
+x=cfg1{1}.tau;
+y=cfg1{1}.beta;
+imagesc(x,y,log(tableTB))
+set(gca,'YDir','normal')
+colorbar
+
+
+%%
+plot(prod((mean(plaMLE(:,:,10,:),4)),1),'r')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

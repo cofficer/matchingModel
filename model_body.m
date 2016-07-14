@@ -1,4 +1,4 @@
-function [ rewardCount,max_like] = model_body( tau,results,choiceStreamAll,runsi,rewardCount,max_like)
+function [ rewardCount,max_like] = model_body( cfg1,results,choiceStreamAll,runsi,rewardCount,max_like)
 %Function does almost all model related calculations. Quite complicated,%Removed output resultsComp
 %perhaps unnecessarily so. 
 %Takenout: mean_sq resultsComp
@@ -50,17 +50,16 @@ end
 %Rest.
 
 %Pre-allocating matrices for optimality.
-modelChoiceVerComp=zeros(1,Totaltrials,length(tau));
-localIncome_HorComp=zeros(1,Totaltrials,length(tau));
-localIncome_VerComp=zeros(1,Totaltrials,length(tau));
+modelChoiceVerComp=zeros(1,Totaltrials,length(cfg1.tau));
+localIncome_HorComp=zeros(1,Totaltrials,length(cfg1.tau));
+localIncome_VerComp=zeros(1,Totaltrials,length(cfg1.tau));
 
 %Range of beta values in grid search.
-%betas=linspace(1,10,10);
-betas=4;
 
-for betaValue=1:length(betas)
+
+for betaValue=1:length(cfg1.beta)
     
-    for tauer=1:length(tau)
+    for tauer=1:length(cfg1.tau)
         %Preset variables
         rewardStreamHorComp=0;
         rewardStreamVerComp=0;
@@ -113,14 +112,14 @@ for betaValue=1:length(betas)
                     else
                         xk = 1;
                     end
-                    k = 1./(exp(-xk/tau(tauer))); % filter equation
+                    k = 1./(exp(-xk/cfg1.tau(tauer))); % filter equation
                     if sum(modelChoiceVerComp(1,2:trialAll,tauer)==1) > 0
                         xl = 1:length(Verchoice);
                         
                     else
                         xl = 1;
                     end
-                    l = 1./(exp(-xl/tau(tauer))); % filter equation
+                    l = 1./(exp(-xl/cfg1.tau(tauer))); % filter equation
                     k = k/(sum(k));
                     
                     outputHor=Horchoice.*k;
@@ -136,9 +135,11 @@ for betaValue=1:length(betas)
                 Verlast = localIncome_VerComp(1,1:trialAll,tauer);
                 
                 diffValue=(localIncome_VerComp(1,trialAll,tauer))-(localIncome_HorComp(1,trialAll,tauer));
-                probChoice=softmaxOwn(diffValue,betas);
+                
+                probChoice=softmaxOwn(diffValue,betaValue);
                 
                 %modelChoiceVerComp(1,trialAll,tauer)=binornd(1,localIncome_VerComp(1,trialAll,tauer));
+                
                 modelChoiceVerComp(1,trialAll,tauer)=binornd(1,probChoice);
                 
                 %Checking if the model choice results in a reward
@@ -178,9 +179,10 @@ for betaValue=1:length(betas)
                 %This if-statement is to avoid issues arising due to
                 %mismatch in length when running simulated data.
                % if trialAll<=length(choiceStreamAll)
-                    l_i=localIncome_VerComp(1,trialAll,tauer);
+                    l_i=probChoice;%localIncome_VerComp(1,trialAll,tauer);
                     max_like(trialAll,tauer,betaValue,runsi)=(l_i.^choiceStreamAll(1,trialAll)).*(1-l_i).^(1-choiceStreamAll(1,trialAll));
-               % end
+                    %  max_like(trialAll,tauer,betaValue,runsi)=0; %remove
+                    % end
                 trialAll=trialAll+1;
             end
         end

@@ -4,7 +4,7 @@ function [ PLA,ATM ] = loadSessions( ~ )
 %Sort all sessions according to ATM/PLA
 
 
-cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
+%cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
 
 
