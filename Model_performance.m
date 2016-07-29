@@ -37,13 +37,13 @@ for allSessions=1:2
 
     else                %load atomoxetine
         load(cfg1.ATMpath)
-        allMLE.PLA=max_like;
+        allMLE.PLA=modelChoiceP;
         
     end
     
     
     %For the output choiceStreamAll, 0 is horizontal and 1 is vertical
-    [choiceStreamAll] = global_matching(results);
+    [choiceStreamAll,rewardStreamAll] = global_matching(results);
     
     Totaltrials=length(choiceStreamAll);%results.parameters.trlTotal;
     Totalblocks=length(results.blocks); %Changed 2/july
@@ -56,96 +56,90 @@ for allSessions=1:2
     max_like=zeros(Totaltrials,length(cfg1.tau),length(cfg1.beta),cfg1.runs);
     
     %Function model_body does the model-specific computations.
-    for runsi=1:cfg1.runs
-        if mod(runsi,2)==1;
-            fprintf('\n%d',runsi)
-        else
-            fprintf('.')
-        end
-        [rewardCount,max_like] = model_body( cfg1,results,choiceStreamAll,runsi,rewardCount,max_like);
+    [rewardCount,modelChoiceP] = model_body( cfg1,results,choiceStreamAll,rewardStreamAll,rewardCount);
         
-    end
+   
     
     %Calulate the mean of the square difference btw model and behvaior
-    mean_sqr=mean(mean_sqr,3);
-    mean_sqAll=mean(mean_sq,3);
-    
-    %Standard error measurement of the squared error between model
-    %choice and local income.
-    sem=zeros(1,length(cfg1.tau));
-    for itau=1:length(cfg1.tau)
-        sem(itau)=std(mean_sq(1,itau,:))/sqrt(length(mean_sq(1,itau,:))); %SEM
-    end
+%     mean_sqr=mean(mean_sqr,3);
+%     mean_sqAll=mean(mean_sq,3);
+%     
+%     %Standard error measurement of the squared error between model
+%     %choice and local income.
+%     sem=zeros(1,length(cfg1.tau));
+%     for itau=1:length(cfg1.tau)
+%         sem(itau)=std(mean_sq(1,itau,:))/sqrt(length(mean_sq(1,itau,:))); %SEM
+%     end
     
     
     %Finding the foraging efficiency of behavioral data. Why the need
     %for the if-else statement. Commented out for now.
-    totalReward=0;
-    for i = 1:Totalblocks
-        %            if i<Totalblocks
-        totalReward = totalReward + sum(results.blocks{i}.newrewardHor) + sum(results.blocks{i}.newrewardVer);
-        %             else
-        %                 totalReward = totalReward + sum(results.blocks{i}.newrewardHor(1:results.blocks{i}.trlinfo(end,1))) + sum(results.blocks{i}.newrewardVer(1:results.blocks{i}.trlinfo(end,1)));
-        %             end
-    end
+%     totalReward=0;
+%     for i = 1:Totalblocks
+%         %            if i<Totalblocks
+%         totalReward = totalReward + sum(results.blocks{i}.newrewardHor) + sum(results.blocks{i}.newrewardVer);
+%         %             else
+%         %                 totalReward = totalReward + sum(results.blocks{i}.newrewardHor(1:results.blocks{i}.trlinfo(end,1))) + sum(results.blocks{i}.newrewardVer(1:results.blocks{i}.trlinfo(end,1)));
+%         %             end
+%     end
     
     %Finding the total possible reward for simulated model data. Different runs
     %are ignored no?
-    totalCompReward=0;
-    try
-        for iC=1:length(resultsComp.blocks)
-            totalCompReward = totalCompReward + sum(resultsComp.blocks{iC}.newrewardHor) + sum(resultsComp.blocks{iC}.newrewardVer);
-        end
-    catch ME
-        aa=11; 
-    end
-    %Optimizing matrix
-    rewardDelivered=zeros(1,length(cfg1.tau),cfg1.runs);
-    
-    %Calculates reward delivered overall for model. ###Changed to totalComp
-    for runna=1:cfg1.runs
-        for rewDel=1:length(cfg1.tau)
-            rewardDelivered(1,rewDel,runna)= round(rewardCount(1,rewDel,runna)/totalCompReward*100);
-        end
-    end
+%     totalCompReward=0;
+%     try
+%         for iC=1:length(resultsComp.blocks)
+%             totalCompReward = totalCompReward + sum(resultsComp.blocks{iC}.newrewardHor) + sum(resultsComp.blocks{iC}.newrewardVer);
+%         end
+%     catch ME
+%         aa=11; 
+%     end
+%     %Optimizing matrix
+%     rewardDelivered=zeros(1,length(cfg1.tau),cfg1.runs);
+%     
+%     %Calculates reward delivered overall for model. ###Changed to totalComp
+%     for runna=1:cfg1.runs
+%         for rewDel=1:length(cfg1.tau)
+%             rewardDelivered(1,rewDel,runna)= round(rewardCount(1,rewDel,runna)/totalCompReward*100);
+%         end
+%     end
     
     %Locates the lowest fitted tau.
-    avgReward=min(mean(mean_sq(1,:,:),3));
+ %   avgReward=min(mean(mean_sq(1,:,:),3));
     %Finds position of lowest tau.
     
-    
-    for eachrun=1:cfg1.runs
-        [~,lowTau]=min(mean_sq(1,:,eachrun));
-        lowTauAll(allSessions,eachrun)=cfg1.tau(lowTau);
-        
-        [~,maxDis]=max(prod(max_like(:,:,1,eachrun)));
-        maxTauAll(allSessions,eachrun)=cfg1.tau(maxDis);
-        
-        if lowTauAll(allSessions,eachrun)~=maxTauAll(allSessions,eachrun)
-            missm=missm+1;
-        end
-    end
-    
-    %lowTau=find(mean(mean_sq(1,:,:),3)==avgReward);
-    forEff=(results.blocks{i}.trlinfo(end)/totalReward)*100;
-    %lowTauAll(1,allSessions)=tau(lowTau);
-    forEffAll(1,allSessions)=forEff;
-    
-    %What is necessary for the plot? The average of the rewardDelivered for all
-    %sessions. Atm, it is doing it once per session.
-    allrun=cfg1.runs*numDelivered;
-    allDelivered(1,:,numVa:allrun)=rewardDelivered;
-    numVa=numVa+cfg1.runs;
-    numDelivered=numDelivered+1;
+%     
+%     for eachrun=1:cfg1.runs
+%         [~,lowTau]=min(mean_sq(1,:,eachrun));
+%         lowTauAll(allSessions,eachrun)=cfg1.tau(lowTau);
+%         
+%         [~,maxDis]=max(prod(max_like(:,:,1,eachrun)));
+%         maxTauAll(allSessions,eachrun)=cfg1.tau(maxDis);
+%         
+%         if lowTauAll(allSessions,eachrun)~=maxTauAll(allSessions,eachrun)
+%             missm=missm+1;
+%         end
+%     end
+%     
+%     %lowTau=find(mean(mean_sq(1,:,:),3)==avgReward);
+%     forEff=(results.blocks{i}.trlinfo(end)/totalReward)*100;
+%     %lowTauAll(1,allSessions)=tau(lowTau);
+%     forEffAll(1,allSessions)=forEff;
+%     
+%     %What is necessary for the plot? The average of the rewardDelivered for all
+%     %sessions. Atm, it is doing it once per session.
+%     allrun=cfg1.runs*numDelivered;
+%     allDelivered(1,:,numVa:allrun)=rewardDelivered;
+%     numVa=numVa+cfg1.runs;
+%     numDelivered=numDelivered+1;
     
 end
 
 
 %plot(allSessions,mean(maxTauAll),'o')
-allMLE.ATM = max_like;
+allMLE.ATM = modelChoiceP;
 timeTaken=toc;
 %Saving all the relevant data per participant.
-save(outputfile,'maxTauAll','allMLE','forEffAll','allDelivered','missm','timeTaken')
+save(outputfile,'allMLE','timeTaken','choiceStreamAll');%'maxTauAll','allMLE','forEffAll','allDelivered','missm','timeTaken')
 
 
 disp('model done')

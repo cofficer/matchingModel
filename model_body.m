@@ -1,4 +1,4 @@
-function [ rewardCount,max_like] = model_body( cfg1,results,choiceStreamAll,runsi,rewardCount,max_like)
+function [ rewardCount,modelChoiceP] = model_body( cfg1,results,choiceStreamAll,rewardStreamAll,rewardCount)
 %Function does almost all model related calculations. Quite complicated,%Removed output resultsComp
 %perhaps unnecessarily so. 
 %Takenout: mean_sq resultsComp
@@ -7,6 +7,8 @@ function [ rewardCount,max_like] = model_body( cfg1,results,choiceStreamAll,runs
 
 Totaltrials=length(choiceStreamAll);
 Totalblocks=length(results.blocks);
+
+modelChoiceP = zeros(Totaltrials,length(cfg1.tau),length(cfg1.beta));
 
 %Simulation of reward stream:
 sim_data=0;
@@ -68,6 +70,8 @@ for betaValue=1:length(cfg1.beta)
         rewardHor=0;
         rewardVer=0;
         trialAll=1;
+        Horchoice = [];
+        Verchoice = [];
         
         for blocksi=1:Totalblocks
             %Parameters for this block
@@ -99,21 +103,37 @@ for betaValue=1:length(cfg1.beta)
                     outputVer = 1;
                 else
                     
+                    %Need to get the reward histories from the actual
+                    %participant. Need to seperate reward histories. 
+                    %Horizontal == 0, vertical ==1
+                    if rewardStreamAll(trialAll) == 1 && choiceStreamAll(trialAll) == 0
+                        Horchoice = [Horchoice,1];
+                        Verchoice = [Verchoice,0];
+                    elseif rewardStreamAll(trialAll) == 0 && choiceStreamAll(trialAll) == 0
+                        Horchoice = [Horchoice,0];
+                        Verchoice = [Verchoice,0];
+                    elseif rewardStreamAll(trialAll) == 1 && choiceStreamAll(trialAll) == 1
+                        Verchoice = [Verchoice,1];
+                        Horchoice = [Horchoice,0];
+                    elseif rewardStreamAll(trialAll) == 0 && choiceStreamAll(trialAll) == 1
+                        Verchoice = [Verchoice,0];
+                        Horchoice = [Horchoice,0];
+                    end
                     %Removing the NaNs
-                    Verchoice = rewardStreamVerAllComp(~isnan(rewardStreamVerAllComp));
+                    %Verchoice = rewardStreamAll(1:trialAll); %rewardStreamVerAllComp(~isnan(rewardStreamVerAllComp));
                     
                     %Removing the NaNs
-                    Horchoice = rewardStreamHorAllComp(~isnan(rewardStreamHorAllComp));
+                    %Horchoice = rewardStreamAll(1:trialAll);%rewardStreamHorAllComp(~isnan(rewardStreamHorAllComp));
                     
                     %Create filter
-                    if sum(modelChoiceVerComp(1,2:trialAll,tauer)==0) > 0
+                    if sum(choiceStreamAll(1,2:trialAll)==0) > 0
                         xk = 1:length(Horchoice);
                         
                     else
                         xk = 1;
                     end
                     k = 1./(exp(-xk/cfg1.tau(tauer))); % filter equation
-                    if sum(modelChoiceVerComp(1,2:trialAll,tauer)==1) > 0
+                    if sum(choiceStreamAll(1,2:trialAll)==1) > 0
                         xl = 1:length(Verchoice);
                         
                     else
@@ -140,49 +160,59 @@ for betaValue=1:length(cfg1.beta)
                 
                 %modelChoiceVerComp(1,trialAll,tauer)=binornd(1,localIncome_VerComp(1,trialAll,tauer));
                 
-                modelChoiceVerComp(1,trialAll,tauer)=binornd(1,probChoice);
+                %Removed the model choice
+                %choiceStreamAll(1,trialAll);%
+                
+                %modelChoiceVerComp(1,trialAll,tauer)=binornd(1,probChoice);
                 
                 %Checking if the model choice results in a reward
                 %or not.
-                if modelChoiceVerComp(1,trialAll,tauer) == 0 && rewardHor > 0 % Response Horizontal + reward avaiable Horizontal
-                    rewardHor = 0;
-                    rewardCount(1,tauer,betaValue,runsi) = rewardCount(1,tauer,betaValue,runsi) + 1;
-                    
-                    rewardStreamVerAllComp(trialAll+1)=NaN; %NaN
-                    rewardStreamHorAllComp(trialAll+1)=1;
-                    
-                elseif modelChoiceVerComp(1,trialAll,tauer) == 1 && rewardVer > 0 % Response Vertical + reward avaiable Vertical
-                    rewardVer = 0;
-                    rewardCount(1,tauer,betaValue,runsi) = rewardCount(1,tauer,betaValue,runsi) + 1;
-                    
-                    rewardStreamVerAllComp(trialAll+1)=1;
-                    rewardStreamHorAllComp(trialAll+1)=NaN; %NaN
-                    
-                    
-                elseif modelChoiceVerComp(1,trialAll,tauer) == 0 && rewardHor == 0
-                    
-                    rewardStreamHorAllComp(trialAll+1)=0;
-                    rewardStreamVerAllComp(trialAll+1)=NaN; %NaN
-                    
-                elseif modelChoiceVerComp(1,trialAll,tauer) == 1 && rewardVer == 0
-                    
-                    rewardStreamHorAllComp(trialAll+1)=NaN; %NaN
-                    rewardStreamVerAllComp(trialAll+1)=0;
-                    
-                end
-                
-                
-                if trialAll==101 && blocksi==3
-                    a=1;
-                end
+%                 if modelChoiceVerComp(1,trialAll,tauer) == 0 && rewardHor > 0 % Response Horizontal + reward avaiable Horizontal
+%                     rewardHor = 0;
+%                     rewardCount(1,tauer,betaValue,runsi) = rewardCount(1,tauer,betaValue,runsi) + 1;
+%                     
+%                     rewardStreamVerAllComp(trialAll+1)=NaN; %NaN
+%                     rewardStreamHorAllComp(trialAll+1)=1;
+%                     
+%                 elseif modelChoiceVerComp(1,trialAll,tauer) == 1 && rewardVer > 0 % Response Vertical + reward avaiable Vertical
+%                     rewardVer = 0;
+%                     rewardCount(1,tauer,betaValue,runsi) = rewardCount(1,tauer,betaValue,runsi) + 1;
+%                     
+%                     rewardStreamVerAllComp(trialAll+1)=1;
+%                     rewardStreamHorAllComp(trialAll+1)=NaN; %NaN
+%                     
+%                     
+%                 elseif modelChoiceVerComp(1,trialAll,tauer) == 0 && rewardHor == 0
+%                     
+%                     rewardStreamHorAllComp(trialAll+1)=0;
+%                     rewardStreamVerAllComp(trialAll+1)=NaN; %NaN
+%                     
+%                 elseif modelChoiceVerComp(1,trialAll,tauer) == 1 && rewardVer == 0
+%                     
+%                     rewardStreamHorAllComp(trialAll+1)=NaN; %NaN
+%                     rewardStreamVerAllComp(trialAll+1)=0;
+%                     
+%                 end
+%                 
+%                 
+%                 if trialAll==101 && blocksi==3
+%                     a=1;
+%                 end
                 
                 %This if-statement is to avoid issues arising due to
                 %mismatch in length when running simulated data.
                % if trialAll<=length(choiceStreamAll)
                     l_i=probChoice;%localIncome_VerComp(1,trialAll,tauer);
-                    max_like(trialAll,tauer,betaValue,runsi)=(l_i.^choiceStreamAll(1,trialAll)).*(1-l_i).^(1-choiceStreamAll(1,trialAll));
+                    %max_like(trialAll,tauer,betaValue,runsi)=(l_i.^choiceStreamAll(1,trialAll)).*(1-l_i).^(1-choiceStreamAll(1,trialAll));
+                    
+                    modelChoiceP(trialAll,tauer,betaValue) = l_i; 
+                    
                     %  max_like(trialAll,tauer,betaValue,runsi)=0; %remove
                     % end
+                    if isnan(l_i)
+                      a=1;
+                    end
+                    
                 trialAll=trialAll+1;
             end
         end

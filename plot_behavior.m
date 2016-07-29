@@ -83,7 +83,7 @@ tableTBatm     = zeros(size(plaMLE,3),size(plaMLE,2));
 
 for eachBeta = 1:size(plaMLE,3)
     for eachTau = 1:size(plaMLE,2)
-        for eachrun = 1:size(plaMLE,4)
+        %for eachrun = 1:size(plaMLE,4)
             
             
             
@@ -91,13 +91,15 @@ for eachBeta = 1:size(plaMLE,3)
             %Per beta and run, the product over all the different tau and
             %choosing the maximum.
             %[~,maxDis]=max(prod(plaMLE(:,eachTau,eachBeta,eachrun)));
-            MLEpla = prod(plaMLE(:,eachTau,eachBeta,eachrun));
-            MLEatm = prod(atmMLE(:,eachTau,eachBeta,eachrun));
-
+         %   MLEpla = prod(plaMLE(:,eachTau,eachBeta,eachrun));
+         %   MLEatm = prod(atmMLE(:,eachTau,eachBeta,eachrun));
+            berno = log(binopdf(choiceStreamAll,1,plaMLE(:,eachTau,eachBeta)'));
+            logLikelihood = -sum((berno(~isinf(berno))));
             
             
-            tableTBpla(eachBeta,eachTau) = tableTBpla(eachBeta,eachTau)+MLEpla;
-            tableTBatm(eachBeta,eachTau) = tableTBatm(eachBeta,eachTau)+MLEatm;
+            
+           % tableTBpla(eachBeta,eachTau) = tableTBpla(eachBeta,eachTau)+MLEpla;
+           % tableTBatm(eachBeta,eachTau) = tableTBatm(eachBeta,eachTau)+MLEatm;
             
             
 
@@ -106,7 +108,7 @@ for eachBeta = 1:size(plaMLE,3)
             
             %betaAll
             
-        end
+        %end
     end
     %tableTB(eachTau,eachBeta)=tableTB(eachTau,eachBeta)./10
 end
