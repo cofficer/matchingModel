@@ -63,12 +63,12 @@ for betaValue=1:length(cfg1.beta)
     
     for tauer=1:length(cfg1.tau)
         %Preset variables
-        rewardStreamHorComp=0;
-        rewardStreamVerComp=0;
-        rewardStreamVerAllComp=1;
-        rewardStreamHorAllComp=1;
-        rewardHor=0;
-        rewardVer=0;
+        %rewardStreamHorComp=0;
+        %rewardStreamVerComp=0;
+        %rewardStreamVerAllComp=1;
+        %rewardStreamHorAllComp=1;
+        %rewardHor=0;
+        %rewardVer=0;
         trialAll=1;
         Horchoice = [];
         Verchoice = [];
@@ -83,24 +83,31 @@ for betaValue=1:length(cfg1.beta)
                 resultsComp.blocks{1,blocksi}.newrewardHor=newrewardHor;
                 resultsComp.blocks{1,blocksi}.newrewardVer=newrewardVer;
             else
-                numtrials=results.blocks{blocksi}.ntrls; %How many trials in one block, should be way more. Changed 2/July.
+               % numtrials=results.blocks{blocksi}.ntrls; %Needs to depend on the correct responses.
+                
+                numtrials=sum(results.blocks{blocksi}.trlinfo(:,6)'~=0);
                 %Reward available identical to participant.
-                newrewardHor=results.blocks{1,blocksi}.newrewardHor; 
-                newrewardVer=results.blocks{1,blocksi}.newrewardVer;
+                %newrewardHor=results.blocks{1,blocksi}.newrewardHor; 
+                %newrewardVer=results.blocks{1,blocksi}.newrewardVer;
             end
 
             for trialsi=1:numtrials
 
                 %Update rewards on target
-                rewardHor = rewardHor+newrewardHor(trialsi);
-                rewardVer = rewardVer+newrewardVer(trialsi);
+               % rewardHor = rewardHor+newrewardHor(trialsi);
+                %rewardVer = rewardVer+newrewardVer(trialsi);
                 
                 %For the first trial set the prior as 0.5 choice prob.
                 %Another way could be to not count the first few trials
-                %somehow. 
+                 
                 if trialAll == 1
                     outputHor = 1;
                     outputVer = 1;
+                    
+                    %Intializing model values. 
+                    Horchoice = 1;
+                    Verchoice = 1;
+                    
                 else
                     
                     %Need to get the reward histories from the actual

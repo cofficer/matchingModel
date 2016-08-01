@@ -47,7 +47,7 @@ xlim([0.7 2.3])
 %Calulate maximulu likelihood estimation
 %Load in all the parameters estimations for all participants and
 %calculate the averages over all runs. 
-
+clear
 %Struct with all the trial likelihoods calculated. 
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/results')
 parts=dir('*.mat');
@@ -88,18 +88,19 @@ for eachBeta = 1:size(plaMLE,3)
             
             
             
-            %Per beta and run, the product over all the different tau and
-            %choosing the maximum.
-            %[~,maxDis]=max(prod(plaMLE(:,eachTau,eachBeta,eachrun)));
-         %   MLEpla = prod(plaMLE(:,eachTau,eachBeta,eachrun));
-         %   MLEatm = prod(atmMLE(:,eachTau,eachBeta,eachrun));
-            berno = log(binopdf(choiceStreamAll,1,plaMLE(:,eachTau,eachBeta)'));
-            logLikelihood = -sum((berno(~isinf(berno))));
+
+            %Calulate the log likelihood for placebo and atomoxetine. 
+            bernoPLA = log(binopdf(choiceStreamPLA,1,plaMLE(:,eachTau,eachBeta)'.*0.99));
+            logLikelihoodPLA = -sum((bernoPLA(~isinf(bernoPLA))));
+            
+            bernoATM = log(binopdf(choiceStreamATM,1,atmMLE(:,eachTau,eachBeta)'.*0.99));
+            logLikelihoodATM = -sum((bernoATM(~isinf(bernoATM))));
             
             
             
-           % tableTBpla(eachBeta,eachTau) = tableTBpla(eachBeta,eachTau)+MLEpla;
-           % tableTBatm(eachBeta,eachTau) = tableTBatm(eachBeta,eachTau)+MLEatm;
+            %Store all the likelihood in a matrix
+            tableTBpla(eachBeta,eachTau) = logLikelihoodPLA;
+            tableTBatm(eachBeta,eachTau) = logLikelihoodATM;
             
             
 
@@ -115,45 +116,47 @@ end
             tableTBplaAll(:,:,ipart) = tableTBpla;
             tableTBatmAll(:,:,ipart) = tableTBatm;
 % 
-% x=linspace(2,10,20);
-% y=linspace(1,5,20);
-% imagesc(x,y,(mean(tableTBplaAll,3)))
+% figure(1)
+% x=linspace(2,10,100);
+% y=linspace(1,3.5,100);
+% imagesc(x,y,((tableTBplaAll(:,:,12))))
+% 
 % set(gca,'YDir','normal')
 % colorbar
 
-
-[valpla,indpla]=max(tableTBpla(:));
-[rowpla,colpla]=ind2sub(size(tableTBpla),indpla);
-
-currTauPla = linspace(2,10,20);
-currTauPla=currTauPla(colpla);%cfg1{1}.tau(colpla);
-currBetaPla =linspace(1,5,20);
-currBetaPla=currBetaPla(rowpla); %cfg1{1}.beta(rowpla);
-
-[valatm,indatm]=max(tableTBatm(:));
-[rowatm,colatm]=ind2sub(size(tableTBatm),indatm);
-
-currTauAtm = linspace(2,10,20);
-currTauAtm=currTauAtm(colatm);%cfg1{1}.tau(colatm);
-currBetaAtm =  linspace(1,5,20);
-currBetaAtm=currBetaAtm(rowatm); %cfg1{1}.beta(rowatm)
-
-allParams(ipart,1,1) = currTauPla;
-allParams(ipart,2,1) = currBetaPla;
-allParams(ipart,1,2) = currTauAtm;
-allParams(ipart,2,2) = currBetaAtm;
-
-disp(ipart)
+% 
+% [valpla,indpla]=max(tableTBpla(:));
+% [rowpla,colpla]=ind2sub(size(tableTBpla),indpla);
+% 
+% currTauPla = linspace(2,10,20);
+% currTauPla=currTauPla(colpla);%cfg1{1}.tau(colpla);
+% currBetaPla =linspace(1,5,20);
+% currBetaPla=currBetaPla(rowpla); %cfg1{1}.beta(rowpla);
+% 
+% [valatm,indatm]=max(tableTBatm(:));
+% [rowatm,colatm]=ind2sub(size(tableTBatm),indatm);
+% 
+% currTauAtm = linspace(2,10,20);
+% currTauAtm=currTauAtm(colatm);%cfg1{1}.tau(colatm);
+% currBetaAtm =  linspace(1,5,20);
+% currBetaAtm=currBetaAtm(rowatm); %cfg1{1}.beta(rowatm)
+% 
+% allParams(ipart,1,1) = currTauPla;
+% allParams(ipart,2,1) = currBetaPla;
+% allParams(ipart,1,2) = currTauAtm;
+% allParams(ipart,2,2) = currBetaAtm;
+% 
+ disp(ipart)
 
 end
 
 disp('done')
 
-
-
-for ir = 1:200
-MLEpla(1,ir) = log(prod(plaMLE(:,2,2,ir)));
-end
+% 
+% 
+% for ir = 1:200
+% MLEpla(1,ir) = log(prod(plaMLE(:,2,2,ir)));
+% end
 
 %%
 %plot(prod((mean(plaMLE(:,:,10,:),4)),1),'r')

@@ -37,5 +37,10 @@ for blocki=1:nblocks
 end
 choiceStreamAll=choiceStreamAll-1;
 
+
+rewardStreamAll = rewardStreamAll(choiceStreamAll~=-1);
+
+choiceStreamAll = choiceStreamAll(choiceStreamAll~=-1);
+
 end
 

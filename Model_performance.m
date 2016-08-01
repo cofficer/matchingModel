@@ -38,6 +38,8 @@ for allSessions=1:2
     else                %load atomoxetine
         load(cfg1.ATMpath)
         allMLE.PLA=modelChoiceP;
+        choiceStreamPLA = choiceStreamAll;
+        
         
     end
     
@@ -137,9 +139,12 @@ end
 
 %plot(allSessions,mean(maxTauAll),'o')
 allMLE.ATM = modelChoiceP;
+
+choiceStreamATM = choiceStreamAll;
+
 timeTaken=toc;
 %Saving all the relevant data per participant.
-save(outputfile,'allMLE','timeTaken','choiceStreamAll');%'maxTauAll','allMLE','forEffAll','allDelivered','missm','timeTaken')
+save(outputfile,'allMLE','timeTaken','choiceStreamPLA','choiceStreamATM');%'maxTauAll','allMLE','forEffAll','allDelivered','missm','timeTaken')
 
 
 disp('model done')
