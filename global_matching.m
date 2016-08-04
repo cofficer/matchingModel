@@ -37,7 +37,7 @@ for blocki=1:nblocks
 end
 choiceStreamAll=choiceStreamAll-1;
 
-
+%Remove all invalid reponses, i.e. too early. 
 rewardStreamAll = rewardStreamAll(choiceStreamAll~=-1);
 
 choiceStreamAll = choiceStreamAll(choiceStreamAll~=-1);

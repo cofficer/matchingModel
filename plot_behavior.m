@@ -55,46 +55,37 @@ parts=dir('*.mat');
 allParams=zeros(length(parts),2,2); %tau/beta, pla/atm. 1 tau, 1 pla
 
 for ipart = 1:length(parts)
-
+    
     load(parts(ipart).name)
     
-%Placebo
-plaMLE = allMLE.PLA;
-atmMLE = allMLE.ATM;
-
-if ipart == 1
+    %Placebo
+    plaMLE = allMLE.PLA;
+    atmMLE = allMLE.ATM;
     
-tableTBplaAll     = zeros(size(plaMLE,3),size(plaMLE,2),length(parts));
-
-
-tableTBatmAll     = zeros(size(plaMLE,3),size(plaMLE,2),length(parts));
-end
-
-tauAll=0;
-
-tableTBpla     = zeros(size(plaMLE,3),size(plaMLE,2));
-
-
-tableTBatm     = zeros(size(plaMLE,3),size(plaMLE,2));
-
-
-
-
-
-for eachBeta = 1:size(plaMLE,3)
-    for eachTau = 1:size(plaMLE,2)
-        %for eachrun = 1:size(plaMLE,4)
+    if ipart == 1
+        
+        tableTBplaAll     = zeros(size(plaMLE,3),size(plaMLE,2),length(parts));
+        
+        
+        tableTBatmAll     = zeros(size(plaMLE,3),size(plaMLE,2),length(parts));
+    end
+    
+    
+    tableTBpla     = zeros(size(plaMLE,3),size(plaMLE,2));
+    
+    
+    tableTBatm     = zeros(size(plaMLE,3),size(plaMLE,2));
+    
+    
+    for eachBeta = 1:size(plaMLE,3)
+        for eachTau = 1:size(plaMLE,2)  
             
             
             
+            %Calulate the log likelihood for placebo and atomoxetine.
+            logLikelihoodPLA = -sum(log(binopdf(choiceStreamPLA,1,plaMLE(:,eachTau,eachBeta)'.*0.99)+0.005));
             
-
-            %Calulate the log likelihood for placebo and atomoxetine. 
-            bernoPLA = log(binopdf(choiceStreamPLA,1,plaMLE(:,eachTau,eachBeta)'.*0.99));
-            logLikelihoodPLA = -sum((bernoPLA(~isinf(bernoPLA))));
-            
-            bernoATM = log(binopdf(choiceStreamATM,1,atmMLE(:,eachTau,eachBeta)'.*0.99));
-            logLikelihoodATM = -sum((bernoATM(~isinf(bernoATM))));
+            logLikelihoodATM = -sum(log(binopdf(choiceStreamATM,1,atmMLE(:,eachTau,eachBeta)'.*0.99)+0.005));
             
             
             
@@ -103,54 +94,48 @@ for eachBeta = 1:size(plaMLE,3)
             tableTBatm(eachBeta,eachTau) = logLikelihoodATM;
             
             
-
             
-            %tauAll(eachrun,eachBeta)=tau(maxDis);
             
-            %betaAll
-            
-        %end
+        end
     end
-    %tableTB(eachTau,eachBeta)=tableTB(eachTau,eachBeta)./10
-end
-            tableTBplaAll(:,:,ipart) = tableTBpla;
-            tableTBatmAll(:,:,ipart) = tableTBatm;
-% 
-% figure(1)
-% x=linspace(2,10,100);
-% y=linspace(1,3.5,100);
-% imagesc(x,y,((tableTBplaAll(:,:,12))))
-% 
-% set(gca,'YDir','normal')
-% colorbar
-
-% 
-% [valpla,indpla]=max(tableTBpla(:));
-% [rowpla,colpla]=ind2sub(size(tableTBpla),indpla);
-% 
-% currTauPla = linspace(2,10,20);
-% currTauPla=currTauPla(colpla);%cfg1{1}.tau(colpla);
-% currBetaPla =linspace(1,5,20);
-% currBetaPla=currBetaPla(rowpla); %cfg1{1}.beta(rowpla);
-% 
-% [valatm,indatm]=max(tableTBatm(:));
-% [rowatm,colatm]=ind2sub(size(tableTBatm),indatm);
-% 
-% currTauAtm = linspace(2,10,20);
-% currTauAtm=currTauAtm(colatm);%cfg1{1}.tau(colatm);
-% currBetaAtm =  linspace(1,5,20);
-% currBetaAtm=currBetaAtm(rowatm); %cfg1{1}.beta(rowatm)
-% 
-% allParams(ipart,1,1) = currTauPla;
-% allParams(ipart,2,1) = currBetaPla;
-% allParams(ipart,1,2) = currTauAtm;
-% allParams(ipart,2,2) = currBetaAtm;
-% 
- disp(ipart)
-
+    tableTBplaAll(:,:,ipart) = tableTBpla;
+    tableTBatmAll(:,:,ipart) = tableTBatm;
+    
+    
+    %[valpla,indpla]=min(tableTBpla(:));
+    %[rowpla,colpla]=ind2sub(size(tableTBpla),indpla);
+    
+    % currTauPla = linspace(2,10,20);
+    % currTauPla=currTauPla(colpla);%cfg1{1}.tau(colpla);
+    % currBetaPla =linspace(1,5,20);
+    % currBetaPla=currBetaPla(rowpla); %cfg1{1}.beta(rowpla);
+    %
+    % [valatm,indatm]=max(tableTBatm(:));
+    % [rowatm,colatm]=ind2sub(size(tableTBatm),indatm);
+    %
+    % currTauAtm = linspace(2,10,20);
+    % currTauAtm=currTauAtm(colatm);%cfg1{1}.tau(colatm);
+    % currBetaAtm =  linspace(1,5,20);
+    % currBetaAtm=currBetaAtm(rowatm); %cfg1{1}.beta(rowatm)
+    %
+    % allParams(ipart,1,1) = currTauPla;
+    % allParams(ipart,2,1) = currBetaPla;
+    % allParams(ipart,1,2) = currTauAtm;
+    % allParams(ipart,2,2) = currBetaAtm;
+    %
+    disp(ipart)
+    
 end
 
 disp('done')
+% % % % 
+figure(1)
+x=linspace(1,25,50);
+y=linspace(0.01,3,50);
+imagesc(x,y,nanmean(tableTBplaAll,3),[325 330])
+%imagesc(mean(tableTBatmAll,3))
+set(gca,'YDir','normal')
+colorbar
 
 % 
 % 
@@ -191,7 +176,7 @@ xlim([0.7 2.3])
 
 %% Save figure, data
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-print('TauParamBARv2','-depsc2')
+print('paramSpaceLocalIncome','-depsc2')
 
 csvwrite('both.csv',both)
 
