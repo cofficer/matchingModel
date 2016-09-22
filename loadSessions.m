@@ -1,10 +1,10 @@
-function [ PLA,ATM ] = loadSessions( ~ )
+function [ PLA,ATM ] = loadSessions(setting)
 %Loads all the data necessary from the sessions
 
 %Sort all sessions according to ATM/PLA
 
 
-%cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
+cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
 
 
 
@@ -21,7 +21,10 @@ partDateUnknown        = {'MGo/20150815','MSo/20150820'...
 
 %First load all the placebo behavior
 PLA = [partDate268, partDate269, partDateUnknown];
+
 PLA = sort(PLA);
+
+PLA = PLA(1:setting.numParticipants);
 
 partMatPLA = cell(1,length(PLA));
 
@@ -72,7 +75,7 @@ PLA=partMatPLA;
 
 allBehavior = dir('*_*.mat');
 
-ATM=setdiff({allBehavior.name},partMatPLA) ;
+ATM=setdiff({allBehavior(1:setting.numParticipants*2).name},partMatPLA) ;
 
 
 
