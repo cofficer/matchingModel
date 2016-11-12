@@ -9,6 +9,8 @@ function [ paramFits, cfg1, PLA, ATM] = parameterFitting(setting)
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 
+
+
 %Look at order or look at intervention
 prompt = 'Sort sessions in order of intervention? ';
 drugEffect = input(prompt); %1 for drugeffect, 0 for order.
