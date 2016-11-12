@@ -9,7 +9,7 @@ function [ paramFits, cfg1, PLA, ATM] = parameterFitting(setting)
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 
-
+%testar
 
 %Look at order or look at intervention
 prompt = 'Sort sessions in order of intervention? ';
