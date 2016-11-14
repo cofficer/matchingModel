@@ -4,8 +4,7 @@ function [ PLA,ATM ] = loadSessions(setting)
 %Sort all sessions according to ATM/PLA
 
 
-cd('/Users/Christoffer/Documents/MATLAB/matchingData/All_behavior')
-
+cd(setting.bhpath)
 
 
 partDate269            = {'AWi/20151007','SBa/20151006','JHo/20151004','JFo/20151007'...

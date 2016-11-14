@@ -4,7 +4,7 @@ function [allMLE,choiceStreamATM,choiceStreamPLA]=Model_performanceK(cfg1,output
 %Model performance should be based on X trials with block conditions identical to those
 %made by the participant.
 %Needs to become a function to be ran per participant
-tic
+
 
   
 
@@ -46,7 +46,7 @@ allMLE.ATM = modelChoiceP;
 
 choiceStreamATM = choiceStreamAll;
 
-timeTaken=toc;
+%timeTaken=toc;
 %Saving all the relevant data per participant.
 %save(outputfile,'allMLE','timeTaken','choiceStreamPLA','choiceStreamATM');%'maxTauAll','allMLE','forEffAll','allDelivered','missm','timeTaken')
 
