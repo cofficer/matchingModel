@@ -6,7 +6,6 @@ function [allMLE,choiceStreamATM,choiceStreamPLA]=Model_performance(cfg1,outputf
 %Needs to become a function to be ran per participant
 tic
 
-cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior')
 
 
 for allSessions=1:2
