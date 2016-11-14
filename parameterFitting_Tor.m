@@ -87,7 +87,7 @@ doPlot =0;
 %Placebo
 plaMLE = allMLE.PLA;
 %Atomoxetine
-atmMLE = allMLE.ATM;
+atmMLE = alqlMLE.ATM;
 
 %Matrix for all parameter values
 %if AllPart==1;
