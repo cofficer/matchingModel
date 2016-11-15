@@ -175,12 +175,12 @@ for betaValue=1:length(cfg1.beta)
                         lsChoice = 0;
                         probChoice = (1-cfg1.ls(lsValue)) * probChoice + cfg1.ls(lsValue) * lsChoice;
                         
-                    elseif rewardStreamAll(trialAll) == 1 && choiceStreamAll(trialAll) == 1 %choice vertical
+                    elseif rewardStreamAll(trialAll-1) == 1 && choiceStreamAll(trialAll-1) == 1 %choice vertical
                         
                         lsChoice = 1;
                         probChoice = (1-cfg1.ls(lsValue)) * probChoice + cfg1.ls(lsValue) * lsChoice;
                         
-                    elseif rewardStreamAll(trialAll) == 1 && choiceStreamAll(trialAll) == 0 %choice vertical
+                    elseif rewardStreamAll(trialAll-1) == 1 && choiceStreamAll(trialAll-1) == 0 %choice vertical
 
                         lsChoice = 0;
                         probChoice = (1-cfg1.ls(lsValue)) * probChoice + cfg1.ls(lsValue) * lsChoice;
