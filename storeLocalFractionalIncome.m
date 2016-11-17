@@ -2,7 +2,7 @@
 
 %Store the local fractional income 
 %But only for the relevant sessions. The placebo. 
-clear
+%clear
 
 setting.numParticipants = 31;
 
@@ -14,7 +14,7 @@ cd(bhpath)
 
 [ PLA,ATM ] = loadSessions(setting);
 
-skipSubj = {'DWe','JRu','MGo','EIv','JFo','SKo'};
+skipSubj = {'JRu','MGo'};
 
 
 AllprobChoice = {};
@@ -31,7 +31,7 @@ for nPart = 1:setting.numParticipants
     %Loop all participants
     [ probChoice,cfg1 ] = pertrialLFI(results,nPart);
     
-    storeTau(nt)=cfg1.tau;
+    storeTauAT(nt)=cfg1.tau;
     nt=nt+1;
     AllprobChoice.LFI{nPart}        = probChoice;
     trlinfos = [];
@@ -45,7 +45,9 @@ end
 
 AllprobChoice.order = PLA; 
 
-%save('-v7.3','AllprobChoice2','AllprobChoice')
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
+
+%save('-v7.3','AllprobChoice3','AllprobChoice')
 
 
 %%

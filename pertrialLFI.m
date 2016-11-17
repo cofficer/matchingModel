@@ -27,14 +27,15 @@ cfg1.tau  = tau;
 cfg1.beta = beta; %Irrelevant, just single value for quick computation
 cfg1.ls   = ls;
 cfg1.numparameter = '3';
+cfg1.simulate = 0;
 
-
+cfg1
 %Get the choice and reward history
 [choiceStreamAll,rewardStreamAll] = global_matchingK(results);
 %By calling model_bodyK I can get the local fractional income per trial. 
 [ local_fracIncome] = model_bodyK( cfg1,results,choiceStreamAll,rewardStreamAll);
 
-cfg1
+
 
 end
 
