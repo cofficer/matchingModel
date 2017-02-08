@@ -65,7 +65,7 @@ localIncome_VerComp=zeros(1,Totaltrials,length(cfg1.tau));
 
 
 for betaValue=1:length(cfg1.beta)
-    
+    disp(betaValue)
     for tauer=1:length(cfg1.tau)
         for lsValue =1:length(cfg1.ls)
             %Preset variables
@@ -162,6 +162,11 @@ for betaValue=1:length(cfg1.beta)
                     
                     %if the previous was
                     
+                    if lsValue==100
+                        aa=1;
+                    end
+                    
+                    
                     probChoice=softmaxOwn([localVer, localHor],cfg1.beta(betaValue));
                     
                     if rewardStreamAll(trialAll-1) == 0 && choiceStreamAll(trialAll-1) == 0 %choice horizontal
@@ -175,11 +180,13 @@ for betaValue=1:length(cfg1.beta)
                         lsChoice = 0;
                         probChoice = (1-cfg1.ls(lsValue)) * probChoice + cfg1.ls(lsValue) * lsChoice;
                         
+                        %win-stay
                     elseif rewardStreamAll(trialAll-1) == 1 && choiceStreamAll(trialAll-1) == 1 %choice vertical
                         
                         lsChoice = 1;
                         probChoice = (1-cfg1.ls(lsValue)) * probChoice + cfg1.ls(lsValue) * lsChoice;
                         
+                        %win-stay
                     elseif rewardStreamAll(trialAll-1) == 1 && choiceStreamAll(trialAll-1) == 0 %choice horizontal
 
                         lsChoice = 0;

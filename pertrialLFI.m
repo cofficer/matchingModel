@@ -35,6 +35,10 @@ cfg1
 %By calling model_bodyK I can get the local fractional income per trial. 
 [ local_fracIncome] = model_bodyK( cfg1,results,choiceStreamAll,rewardStreamAll);
 
+%Find trials where the choice was horizontal and take 1-localfractincome. 
+indHor = choiceStreamAll==0;
+
+local_fracIncome(indHor)=1-local_fracIncome(indHor);
 
 
 end

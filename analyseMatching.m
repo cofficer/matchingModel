@@ -13,12 +13,12 @@
 setting.modeltype              = '3';
 
 %Define the scope of parameter space. 
-setting.beta                   = linspace(.1,2,50);
-setting.tau                    = linspace(1,20,50);
-setting.ls                     = linspace(0,1,50);
+setting.beta                   = linspace(.1,2,2);
+setting.tau                    = linspace(1,20,2);
+setting.ls                     = linspace(0,1,2);
 
 %How many participants should be analysed?
-setting.numParticipants        = 1; %need to remove JRu and MGo somehow. 
+setting.numParticipants        = 29; %need to remove JRu and MGo somehow. 
 
 %Get parameter fits for the number of participants defined. 
 [ paramFits, cfg1, PLA, ATM]   = parameterFitting( setting);
@@ -43,12 +43,16 @@ barplotParameters( paramFits,setting)
 %Use simulated behavior or not.
 simulate = 0;
 
+bhpath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
+
+setting.bhpath          = bhpath;
+
 %
 [ PLA,ATM ] = loadSessions(setting);
 
 %Remove participants post-hoc, nr 20, 24
-PLA{20}=[];PLA{24}=[];
-ATM{20}=[];ATM{24}=[];
+%PLA{20}=[];PLA{24}=[];
+%ATM{20}=[];ATM{24}=[];
 
 PLA=PLA(~cellfun('isempty',PLA));
 ATM=ATM(~cellfun('isempty',ATM));

@@ -175,12 +175,12 @@ paramINDpla     = zeros(size(tableTBatmAll,4),3);
     atmMLE      = tableTBatmAll(:,:,:);
     plaMLE      = tableTBplaAll(:,:,:);
     
-    paramVALatm = min(atmMLE(:)); 
-    paramVALpla = min(plaMLE(:));
+    [paramVALatm, idxatm] = min(atmMLE(:)); 
+    [paramVALpla, idxpla] = min(plaMLE(:));
     
     
-    [paramROWatm,paramCOLatm,paramZatm] = ind2sub(size(atmMLE),find(atmMLE==paramVALatm)); 
-    [paramROWpla,paramCOLpla,paramZpla] = ind2sub(size(atmMLE),find(plaMLE==paramVALpla)); 
+    [paramROWatm,paramCOLatm,paramZatm] = ind2sub(size(atmMLE),idxatm); 
+    [paramROWpla,paramCOLpla,paramZpla] = ind2sub(size(atmMLE),idxpla); 
     
     %Store the indices in 3d matrix
     paramINDatm(:)           = [paramROWatm,paramCOLatm,paramZatm];

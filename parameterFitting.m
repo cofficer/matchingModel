@@ -45,7 +45,7 @@ plotNumber = 1;
 
 %Remove two participants, JRU and MGO
 %Remove participants post-hoc, nr 20, 24
-PLA{20}=[];PLA{24}=[];
+%PLA{20}=[];PLA{24}=[];
 PLA=PLA(~cellfun('isempty',PLA));
 ATM=PLA(~cellfun('isempty',PLA));
 
