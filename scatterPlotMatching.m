@@ -1,23 +1,23 @@
-function scatterPlotMatching( contrast, performance, l_switch, paramFits )
+function scatterPlotMatching( contrast, performance, l_switch )
 
 %Function for handling all the scatter plots for the behavior and model
 %fits of matching project.
 
-setting.numParticipants = length(l_switch)/2;
-[ PLA,ATM ] = loadSessions(setting);
+%setting.numParticipants = length(l_switch)/2;
+%[ PLA,ATM ] = loadSessions(setting);
 
-
-%unpack structure paramFits
-tauATMfits          = paramFits.tauATMfits;
-tauPLAfits          = paramFits.tauPLAfits;
-
-betaATMfits         = paramFits.betaATMfits;
-betaPLAfits         = paramFits.betaPLAfits;
-
-colormat = zeros(size(performance, 2), 3);
-
-colormat(1:2:end,:) = repmat([0,1,0],size( colormat(1:2:end,:),1),1);
-colormat(2:2:end,:) = repmat([1,0,0],size( colormat(1:2:end,:),1),1);
+% 
+% %unpack structure paramFits
+% tauATMfits          = paramFits.tauATMfits;
+% tauPLAfits          = paramFits.tauPLAfits;
+% 
+% betaATMfits         = paramFits.betaATMfits;
+% betaPLAfits         = paramFits.betaPLAfits;
+% 
+% colormat = zeros(size(performance, 2), 3);
+% 
+% colormat(1:2:end,:) = repmat([0,1,0],size( colormat(1:2:end,:),1),1);
+% colormat(2:2:end,:) = repmat([1,0,0],size( colormat(1:2:end,:),1),1);
 
 switch contrast
     
@@ -27,15 +27,18 @@ switch contrast
         hold on;box off;
         set(h,'position',[10 60 800 800 ],'Color','w');
         
+        s=scatter(performance,l_switch,'filled');
+        s.MarkerEdgeColor='black';
+        s.MarkerFaceColor='black';
         
         %Plot the loose switch, performance plot
 
-        scatter(performance,l_switch,[],colormat)%colormat)
+        %scatter(performance,l_switch,[],colormat)%colormat)
 
         
-        title('Relationship between lose-switch and foraging efficiency','fontsize',20)
+        title('Relationship between lose-switch and foraging efficiency')
         
-        %set(gca,'fontsize',14)
+        set(gca,'fontsize',14)
         
         xlabel('Performance')
         ylabel('Lose-Switch')

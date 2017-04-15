@@ -72,9 +72,21 @@ PLA=partMatPLA;
 %Second load all the atomoxetine behavior
 %Find indexes of all the files in placebo array.
 
-allBehavior = dir('*_*.mat');
+allBehavior = dir('*sess*.mat');
 
-ATM=setdiff({allBehavior(1:setting.numParticipants*2).name},partMatPLA) ;
+
+
+
+
+%Get the subject IDs to find all the correct subject for ATM
+PLAshort = cellfun(@(x) x(1:3),partMatPLA,'UniformOutput',false);
+
+ATMshort=cellfun(@(x) x(1:3),{allBehavior.name},'UniformOutput',false);
+
+idxATM=ismember(ATMshort,PLAshort);
+
+ATM=setdiff({allBehavior(idxATM).name},PLA) ;
+
 
 
 

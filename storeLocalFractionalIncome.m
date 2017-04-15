@@ -1,8 +1,9 @@
 
-
-%Store the local fractional income
+%Script for computing trial-by-trial choice prediction based on leaky
+%accumulation and lose-switch model. 
+%Store the local fractional income, or probability of choice, 
 %But only for the relevant sessions. The placebo.
-%clear
+%
 
 setting.numParticipants = 29;
 
@@ -33,14 +34,31 @@ for nPart = 1:setting.numParticipants
         order(nt)                    = {PLA{nPart}(1:3)};
         
         %Loop all participants
-        [ probChoice,cfg1 ]          = pertrialLFI(results,nPart);
+        numparameter = {'1';'2';'3'};
         
-        %
-        storeTauAT(nt)               = cfg1.tau;
-        
-        AllprobChoice.LFI{nt}        = probChoice;
-        
-        %Increase the index of actual participants. 
+        %Store the PC output from each model. However, from PC3 and PC2 I
+        %could alo retrieve the LFI.
+        for imodels = 1:length(numparameter)
+            
+            cfg1.numparameter=numparameter{imodels};
+            
+            [ probChoice,LocalFract,cfg1 ]          = pertrialLFI(results,nPart,cfg1);
+            
+            %
+            storeTauAT(nt)               = cfg1.tau;
+            storeLSAT(nt)                = cfg1.ls;
+            if cfg1.numparameter == '3'
+                AllprobChoice.PC3{nt}         = probChoice;
+                AllprobChoice.LFI3{nt}        = LocalFract;
+            elseif cfg1.numparameter == '2'
+                AllprobChoice.PC2{nt}         = probChoice;
+                AllprobChoice.LFI2{nt}        = LocalFract;
+            elseif cfg1.numparameter == '1'
+                AllprobChoice.PC1{nt}         = probChoice;
+                AllprobChoice.LFI1{nt}        = probChoice;
+            end
+        end
+        %Increase the index of actual participants.
         nt                           = nt+1;
 
         trlinfos = [];
@@ -53,11 +71,12 @@ for nPart = 1:setting.numParticipants
     
 end
 
+%%
 AllprobChoice.order = order;
 
 cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel')
 
-save('-v7.3','AllprobChoice3-0702-17','AllprobChoice')
+save('-v7.3','AllprobChoice2-1203-17','AllprobChoice')
 
 
 %%

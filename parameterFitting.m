@@ -20,9 +20,14 @@ drugEffect = input(prompt); %1 for drugeffect, 0 for order.
 prompt = 'Simulated data with lose switch heuristic? ';
 simulateLoseSwitch = input(prompt); %1 for simulated data, 0 for actual b.
 
+%Use the already computed parameter fits?
+prompt = 'Use the already computed parameter fits? ';
+useParamFits = input(prompt); %1 for simulated data, 0 for actual b.
+
+
 %Find the behavioral data. 
 
-dataPath = '/Users/Christoffer/Documents/MATLAB/ModelCode/Results/participantData/';
+dataPath = '/mnt/homes/home024/chrisgahn/Documents/MATLAB/All_behavior/';
 
 cd(dataPath)
 participantPath = dir('*mat');
@@ -54,11 +59,30 @@ ATM=PLA(~cellfun('isempty',PLA));
 %Loop over all participants
 for AllPart = 1:setting.numParticipants
 
-%Define cfg settings
-cfg1.beta                   = setting.beta;
-cfg1.tau                    = setting.tau;
-cfg1.ls                     = setting.ls;
+    
+    if useParamFits
+        
+        currentParticipant = PLA{AllPart};
+        
+        currentParticipant = currentParticipant(1:3);
+        
+        load(sprintf('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/matchingModel/resultsParamFits/%s.mat',currentParticipant))
+        %Define cfg settings for PLA
+        cfg1.beta                   = paramFits.betaPLAfits; %Load already defined fits.
+        cfg1.tau                    = paramFits.tauPLAfits;
+        cfg1.ls                     = paramFits.lsPLAfits;
+        
+    else
+        
+        %Define cfg settings
+        cfg1.beta                   = setting.beta;
+        cfg1.tau                    = setting.tau;
+        cfg1.ls                     = setting.ls;
+        
+    end
+
 cfg1.runs                   = 1; %Irrelevant
+cfg1.simulate               = setting.simulate;
 cfg1.session                = 'AWi/20151007';
 cfg1.simulateLoseSwitch     = simulateLoseSwitch; %1 for yes, 0 for no. 
 cfg1.drugEffect             = drugEffect;
@@ -79,6 +103,15 @@ outputfile                  = '';
 cfg1.AllPart = AllPart;
 [allMLE,choiceStreamATM,choiceStreamPLA] = Model_performanceK(cfg1,outputfile);
 
+if cfg1.simulate
+    load(cfg1.PLApath)
+    [choiceStreamAll,rewardStreamAll] = global_matchingK(results);
+    choiceStreamPLA = choiceStreamAll;
+    load(cfg1.ATMpath)
+    [choiceStreamAll,rewardStreamAll] = global_matchingK(results);
+    choiceStreamATM = choiceStreamAll;
+
+end
 
 %%
 %Plot the parameter space figures for ATM and PLA sessions 
@@ -174,33 +207,35 @@ for iP = 1:size(tableTBatmAll,4)
     atmMLE      = tableTBatmAll(:,:,:,iP);
     plaMLE      = tableTBplaAll(:,:,:,iP);
     
-    paramVALatm = min(atmMLE(:)); 
-    paramVALpla = min(plaMLE(:));
+    [paramVALatm, idxatm] = min(atmMLE(:)); 
+    [paramVALpla, idxpla] = min(plaMLE(:));
     
     
-    [paramROWatm,paramCOLatm,paramZatm] = ind2sub(size(atmMLE),find(atmMLE==paramVALatm)); 
-    [paramROWpla,paramCOLpla,paramZpla] = ind2sub(size(atmMLE),find(plaMLE==paramVALpla)); 
+    [paramROWatm,paramCOLatm,paramZatm] = ind2sub(size(atmMLE),idxatm); 
+    [paramROWpla,paramCOLpla,paramZpla] = ind2sub(size(atmMLE),idxpla); 
     
     %Store the indices in 3d matrix
     paramINDatm(iP,:)           = [paramROWatm,paramCOLatm,paramZatm];
     paramINDpla(iP,:)           = [paramROWpla,paramCOLpla,paramZpla];
     
-end
+%end
 
 
 %Store the tau parameter fits using the index. 
-paramFits.tauATMfits = cfg1.tau(paramINDatm(:,2)); 
-paramFits.tauPLAfits = cfg1.tau(paramINDpla(:,2)); 
+paramFits(iP).tauATMfits = cfg1.tau(paramINDatm(iP,2)); 
+paramFits(iP).tauPLAfits = cfg1.tau(paramINDpla(iP,2)); 
 
 %Store the beta parameter fits using the index. 
-paramFits.betaATMfits = cfg1.beta(paramINDatm(:,1)); 
-paramFits.betaPLAfits = cfg1.beta(paramINDpla(:,1)); 
+paramFits(iP).betaATMfits = cfg1.beta(paramINDatm(iP,1)); 
+paramFits(iP).betaPLAfits = cfg1.beta(paramINDpla(iP,1)); 
 
 %Store the lose-switch parameter fits using the index
-paramFits.lsATMfits = cfg1.ls(paramINDatm(:,3)); 
-paramFits.lsPLAfits = cfg1.ls(paramINDpla(:,3)); 
+paramFits(iP).lsATMfits = cfg1.ls(paramINDatm(iP,3)); 
+paramFits(iP).lsPLAfits = cfg1.ls(paramINDpla(iP,3)); 
 
+%paramFits(iP).name = 
+
+end
 disp('Paramater fits are stored!')
-
 end
 
