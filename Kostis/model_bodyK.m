@@ -60,6 +60,11 @@ if cfg1.sim_task
 else
     resultsComp=[]; %Just to avoid output error
     nblocks=length(results.blocks);
+    if cfg1.modelchoices
+      nblocks=10;
+    else
+      nblocks=length(results.blocks);
+    end
 end
 
 %%
@@ -81,9 +86,14 @@ if cfg1.simulate
             Hreward =[Hreward HrewardB];
             Vreward =[Vreward VrewardB];
         else
+            if strcmp(cfg1.session(1:3),'MAb') && blocks==10
+              Hreward = [Hreward results.blocks{9}.newrewardHor];
+              Vreward = [Vreward results.blocks{9}.newrewardVer];
+            else
+              Hreward = [Hreward results.blocks{blocks}.newrewardHor];
+              Vreward = [Vreward results.blocks{blocks}.newrewardVer];
+            end
 
-            Hreward = [Hreward results.blocks{blocks}.newrewardHor];
-            Vreward = [Vreward results.blocks{blocks}.newrewardVer];
         end
 
     end

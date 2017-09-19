@@ -11,70 +11,8 @@ function parameterFitting_Tor(cfg1)
 
 outputfile = cfg1.outputfile ;
 
-%Look at order or look at intervention
-%prompt = 'Sort sessions in order of intervention? ';
-%drugEffect = input(prompt); %1 for drugeffect, 0 for order.
-
-
-%Look at simulated lose switch or actual behavior
-%prompt = 'Simulated data with lose switch heuristic? ';
-%simulateLoseSwitch = input(prompt); %1 for simulated data, 0 for actual b.
-
-
-%Find the behavioral data.
-
-%dataPath = '/Users/Christoffer/Documents/MATLAB/ModelCode/Results/participantData/';
-
-%cd(dataPath)
-%participantPath = dir('*mat');
-
-%%8
 
 doPlot =0;
-
-%if doPlot == 1
-%Initialize figure
-%h = figure(1); set(h,'position',[10 60 400 400 ],'Color','w');
-%hold on; box off;
-%end
-
-%plotNumber = 1;
-
-
-%Figure out which session is placebo and which is atomoxetine.
-%[ PLA,ATM ] = loadSessions(setting);
-
-%Remove two participants, JRU and MGO
-%Remove participants post-hoc, nr 20, 24
-%PLA{20}=[];PLA{24}=[];
-%PLA=PLA(~cellfun('isempty',PLA));
-%ATM=PLA(~cellfun('isempty',PLA));
-
-
-
-%Loop over all participants
-%for AllPart = 1:setting.numParticipants
-
-%Define cfg settings
-%cfg1.beta                   = setting.beta;
-%cfg1.tau                    = setting.tau;
-%cfg1.ls                     = setting.ls;
-%cfg1.runs                   = 1; %Irrelevant
-%cfg1.session                = 'AWi/20151007';
-%cfg1.simulateLoseSwitch     = simulateLoseSwitch; %1 for yes, 0 for no.
-%cfg1.drugEffect             = drugEffect;
-%cfg1.numparameter           = setting.modeltype;
-%Structure data in order of sessions
-% if cfg1.drugEffect
-%     cfg1.ATMpath                = strcat(dataPath,participantPath(AllPart*2).name);
-%     cfg1.PLApath                = strcat(dataPath,participantPath(AllPart*2-1).name);
-% %Structure data in order of intervention
-% else
-%     cfg1.ATMpath                = strcat(dataPath,ATM{AllPart});
-%     cfg1.PLApath                = strcat(dataPath,PLA{AllPart});
-% end
-%Define output folder
-%outputfile                  = '';
 
 %Run model
 %cfg1.AllPart = AllPart;

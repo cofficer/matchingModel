@@ -27,17 +27,13 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
     a=1; %if Im using simulated choices and want to recover the parameters then choices are already loaded.
     clear allMLE
   else
+
     %Get the history of choices and rewards, 0 is horizontal and 1 is vertical
-
-
     [choiceStreamAll,rewardStreamAll] = global_matchingK(results);
     choiceStreamAll=choiceStreamAll';
     rewardStreamAll=rewardStreamAll';
 
   end
-  %Model-specific computations.
-
-
 
   %Create matrix for all choice and model predictions for number of runs.
   %Could use runs for each parameter pair.
@@ -71,6 +67,7 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
       cfg1.beta = orig_cfg.beta;
       cfg1.tau  = orig_cfg.tau;
       cfg1.ls   = orig_cfg.ls;
+
 
       %Remove lose-switch if only 2 parameters, which is tau/beta.
       if cfg1.numparameter=='2'
