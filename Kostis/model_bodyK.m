@@ -119,7 +119,7 @@ for betaValue=1:length(cfg1.beta)
 
             for trialAll=1:Totaltrials
 
-                disp(Totaltrials)
+                %disp(Totaltrials)
                 %Simulate the first choice of the model which is random.
                 if cfg1.simulate
 
@@ -192,7 +192,7 @@ for betaValue=1:length(cfg1.beta)
                             LocalFract(trialAll,tauer,betaValue,lsValue) = localVer;
                             %Compute the noise level influene on LFI
                             probChoice=softmaxOwn([localVer, localHor],cfg1.beta(betaValue));
-                            
+
                             if rewardStreamAll(trialAll-1) == 0 && choiceStreamAll(trialAll-1) == 0 %choice horizontal
 
                                 lsChoice = 1;

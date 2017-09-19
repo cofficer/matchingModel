@@ -5,26 +5,6 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
   %made by the participant.
   %Needs to become a function to be ran per participant
 
-
-
-
-  %for allSessions=1:2
-
-  %if allSessions == 1 %load placebo
-
-  %     load(cfg1.PLApath)
-  %     partPath = cfg1.PLApath;
-  % else                %load atomoxetine
-  %     load(cfg1.ATMpath)
-  %     partPath = cfg1.ATMpath;
-  %Store choice probabilities for placebo session.
-  %     allMLE.PLA=modelChoiceP;
-  %    choiceStreamPLA = choiceStreamAll;
-
-
-
-  % end
-
   orig_cfg = cfg1;
 
   %Load the single session of interest.
@@ -81,11 +61,11 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
         [modelChoiceP,LocalFract,choiceStreamC,rewardStreamC] = model_bodyK( cfg1,results,choiceStreamAll(:,1),rewardStreamAll(:,1));
 
       end
-      rewardStreamAll(:,irun)=rewardStreamC;
+      rewardStreamCAll(:,irun)=rewardStreamC;
 
-      choiceStreamAll(:,irun)=choiceStreamC;
+      choiceStreamCAll(:,irun)=choiceStreamC;
 
-      allMLE (:,irun)= modelChoiceP;
+      allCMLE (:,irun)= modelChoiceP;
 
     else
       cfg1.beta = orig_cfg.beta;
@@ -117,12 +97,14 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
         allMLE(:,:,:,:,irun)= modelChoiceP;
       end
     end
-
-
-
-
   end
 
   cfg1 = orig_cfg;
+
+if cfg1.simulate
+  rewardStreamAll = rewardStreamCAll;
+  choiceStreamAll = choiceStreamCAll;
+  allMLE = allCMLE;
+end
 
 end
