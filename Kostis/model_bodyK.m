@@ -59,7 +59,6 @@ if cfg1.sim_task
 
 else
     resultsComp=[]; %Just to avoid output error
-    nblocks=length(results.blocks);
     if cfg1.modelchoices
       nblocks=10;
     else
