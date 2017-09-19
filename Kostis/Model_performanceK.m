@@ -38,6 +38,7 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
   %Create matrix for all choice and model predictions for number of runs.
   %Could use runs for each parameter pair.
   for irun = 1:cfg1.runs
+    disp(irun)
     %If the loaded cfg1 is overwritten, check if original did not want
     %to simulate, in that case use all the parameter space from
     %orig_cfg
