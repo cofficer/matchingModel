@@ -48,12 +48,38 @@ if ~cfg1.modelchoices && ~cfg1.recover
 
 
                 %Calulate the log likelihood for placebo and atomoxetine.
+                %Binopdf, calculates the overlap between choiceStreamAll (choices) and allMLE (model predictions)
+                %Closer to 0 means better model fits.
                 logLikelihood = -sum(log(binopdf(choiceStreamAll,1,allMLE(:,eachTau,eachBeta,eachLS)'.*0.99+0.005)));
                 %   logLikelihoodATM = -sum(log(binopdf(choiceStreamATM,1,atmMLE(:,eachTau,eachBeta,eachLS)'.*0.99+0.005)));
 
                 %Store all the log likelihood estimations
                 tableTB(eachBeta,eachTau,eachLS) = logLikelihood;
                 %      tableTBatm(eachBeta,eachTau,eachLS) = logLikelihoodATM;
+
+
+                % %Sense Checking plot!
+                % figure(1),clf
+                % distBino = binopdf(choiceStreamAll,1,allMLE(:,eachTau,eachBeta,eachLS)'.*0.99+0.005,'k');
+                % plot(distBino(1:20))
+                % hold on;
+                % plot(choiceStreamAll(1:20)-0.3,'r')
+                % plot(allMLE(1:20,eachTau,eachBeta,eachLS)'.*0.99+0.005-0.3,'r')
+                % ylim([-0.1 1.2])
+                %
+                % %name files
+                % formatOut = 'yyyy-mm-dd';
+                % todaystr = datestr(now,formatOut);
+                % namefigure = sprintf('testing_MLE');%fractionTrialsRemaining
+                % filetype    = 'png';
+                % figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype)
+                %
+                % saveas(gca,figurename,'png')
+
+
+
+
+
 
             end
         end
@@ -152,7 +178,7 @@ else%Save all the choice from all the runs.
 
         for irun = 1:size(allMLE,5)
 
-        choiceStreamAll=o_choiceStream(:,irun)';
+        choiceStreamAll=o_choiceStream(irun,:);
 
         allMLE = o_MLE(:,:,:,:,irun);
 
