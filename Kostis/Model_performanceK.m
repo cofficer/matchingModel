@@ -80,7 +80,7 @@ function [allMLE,choiceStreamAll,rewardStreamAll]=Model_performanceK(cfg1)
 
       cfg1.simulate = 0;
       %Create dummy results variable, it is only used if simulating
-      if modelchoices
+      if cfg1.modelchoices
         results = [];
       end
 
