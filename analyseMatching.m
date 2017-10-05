@@ -66,12 +66,12 @@ fnames = fieldnames(paramFits);
 
 %loop over all the fieldnames in the parameter fits. ATM/PLA for beta/tau.
 for ifield = 1:length(fnames)
-    
+
     %paramFits.(fnames{ifield})(20)=0; %Participant JRu
     %paramFits.(fnames{ifield})(24)=0; %Participant MGo
-    
+
     paramFits.(fnames{ifield})=paramFits.(fnames{ifield})(paramFits.(fnames{ifield})>0);
-    
+
 end
 
 %calculate the lose-switch strategy.
@@ -90,6 +90,7 @@ indBadPer = find(performance<0.6);
 %cellfun('isempty',PLA)
 
 
+%Use new plot and make 
 
 %Plot lose-switch vs. performance
 contrast                       = 'lose-performance';
@@ -128,21 +129,21 @@ hold on
 PLA=[PLA,ATM];
 
 %Decided to plot all the blocks in one figuere as it stands.
-
+allblocks=1;
 for sess =1:length(PLA)%-2
     %Load the results per participant
-    
+
     load(PLA{sess})
     %participantPath = PLA{participant};
-    
+
     %load(ATM{participant})
     %participantPath = ATM{participant};
     %participant = participant+1;
-    
-    
+
+
     [choiceStreamAll,rewardStreamAll] = global_matchingK(results);
-    
-    
+
+
     %subplot(1,1,sess)
     hold on
     %Calculate the reward delivered,
@@ -150,17 +151,17 @@ for sess =1:length(PLA)%-2
     allpropCV=0;
     allpropRV=0;
     for ib = 1:results.nblocks
-        
-        
-        
+
+
+
         validTrials=results.blocks{ib}.trlinfo(:,7)~=0;
-        
+
         rewarDelivered = rewarDelivered +...
             sum(results.blocks{ib}.newrewardHor(validTrials)) +...
             sum(results.blocks{ib}.newrewardVer(validTrials));
-        
-        
-        
+
+
+
         %All collected rewards
         allR=(results.blocks{ib}.trlinfo(:,8));
         allR=allR(validTrials);
@@ -169,29 +170,33 @@ for sess =1:length(PLA)%-2
         allCV=allCV(validTrials);
         %All verticl rewards
         allRV=allR(logical(allCV));
-        
+
         %Proportion of verticl choices
         propCV=sum(allCV)/length(allCV);
-        
+
         %Proportion vertical rewards
         propRV=sum(allRV)/sum(allR);
-        
+
         %All reward recieved from vertical choice
         %Proportion vertical choice == proportion vertical reward.
-        
+
         plot(propRV,propCV,'.','color','k','markers',15)
-        
-        
+
+        %Save all reward ratios and choice ratios from all blocks.
+        propRV_all_blocks(allblocks) = log(propRV);
+        propCV_all_blocks(allblocks) = log(propCV);
+        allblocks=allblocks+1;
+
         allpropCV=allpropCV+propCV;
         allpropRV=allpropRV+propRV;
-        
+
         if propRV>1
             disp(PLA{sess})
             disp(sess)
             disp(ib)
-            
+
         end
-        
+
     end
     %line([0 1],[0 1],'color','r')
     %title(PLA{sess}(1:3))
@@ -209,7 +214,25 @@ end
 line([0 1],[0 1],'color','r')
 
 
+%New way of saving Figure using gramm
+g=gramm('x',propCV_all_blocks,'y',propRV_all_blocks);
+g.geom_point();
+g.stat_glm();
+g.set_names('column','Origin','x','Choice ratio','y','Reward ratio','color','#');
+g.set_text_options('base_size',15);
+g.set_title('Heuristic');
+g.draw();
 
+cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
+%Name of figure
+filetyp='svg';
+%name files
+formatOut = 'yyyy-mm-dd';
+todaystr = datestr(now,formatOut);
+namefigure = sprintf('overall-probability-matching');%fractionTrialsRemaining
+filetype    = 'svg';
+figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype);
+g.export('file_name',figurename,'file_type',filetype);
 
 %%
 %Figure out which sessions to ignore, how to divide up the sessions
@@ -242,4 +265,3 @@ atm=paramFits.tauATMfits';
 pla=paramFits.tauPLAfits';
 
 csvwrite('botparams.csv',[atm pla])
-

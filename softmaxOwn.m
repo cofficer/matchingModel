@@ -10,34 +10,20 @@ function [output]=softmaxOwn(input,beta)
 %Plot the simulated softmax
 plotsim = 0;
 if plotsim == 1
-  betas= [0.2];%[0.05,0.1,0.3,0.6,1,2];
+  betas= [0.05 0.2 0.4 0.6 0.8 1 1.2];%[0.05,0.1,0.3,0.6,1,2];
   for ibeta=1:length(betas)
     beta=betas(ibeta);
     cd('/mnt/homes/home024/chrisgahn/Documents/MATLAB/code/analysis/TFGitAnlysis/figures')
-    h = figure(1),clf; %set(h,'position',[10 60 400 400 ],'Color','w');
-    hold on; %box off;
+    %h = figure(1),clf; %set(h,'position',[10 60 400 400 ],'Color','w');
+    %hold on; %box off;
     sofarB='';
     legendAll{ibeta}=num2str(beta);
     xval=linspace(0,1,100);
-    %xval=rand(1,1000);
-    %xval2=rand(1,1000);
-    %  %
-    % %output=1/(1+exp(-(input)*beta));
-    % %
-    % %
 
     for i =1:100
       x(i)=xval(i)-(1-xval(i));
       y(i)=exp(xval(i)/beta)/sum([exp((xval(i))/beta),exp((1-xval(i))/beta)]);
     end
-
-    plot(x,y,'k')
-
-    xlabel('Input value difference')
-    ylabel('Output probability of choice')
-    title('Softmax target selection for different beta values')
-    legend(legendAll)
-    saveas(h,sprintf('%s_softmaxTEST2.pdf',num2str(ibeta)))
 
     %Try a gramm plot instead.
     figure(2),clf
@@ -51,13 +37,14 @@ if plotsim == 1
     g.set_color_options('chroma',1)
 
     g.draw();
-
+    g.facet_axes_handles.XLim=[-1.1 1.1];
+    g.facet_axes_handles.YLim=[-0.0426 1.0426];
     %name files
     formatOut = 'yyyy-mm-dd';
     todaystr = datestr(now,formatOut);
-    namefigure = sprintf('soft_max');%fractionTrialsRemaining
+    namefigure = sprintf('soft_max%s',num2str(beta));%fractionTrialsRemaining
     filetype    = 'svg';
-    figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype)%2012-06-28 idyllwild library - sd - exterior massing model 04.skp
+    figurename = sprintf('%s_%s.%s',todaystr,namefigure,filetype);%2012-06-28 idyllwild library - sd - exterior massing model 04.skp
     g.export('file_name',figurename,'file_type',filetype)
     %saveas(gca,figurename,'pdf')
 
